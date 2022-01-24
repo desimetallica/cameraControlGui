@@ -4,9 +4,9 @@
       <div class="flex xs12 md6 lg4">
         <receivers-list/>
       </div>
-
+    
       <div class="flex xs12 md6 lg6">
-        <control-item />
+        <receiver v-if="selectedReceiver != null" :selectedReceiver="selectedReceiver" />
       </div>
     </div>
 
@@ -24,8 +24,9 @@
 </template>
 
 <script>
-import ControlItem from './ControlItem.vue'
 import ReceiversList from './ReceiversList.vue'
+import Receiver from './Receiver.vue'
+import { mapState } from "vuex"
 
 // import DashboardTabs from './DashboardTabs'
 // import DashboardContributorsList from './DashboardContributorsList.vue'
@@ -35,14 +36,20 @@ import ReceiversList from './ReceiversList.vue'
 
 export default {
   name: 'dashboard',
+  
   components: {
     // DashboardCharts,
     // DashboardInfoBlock,
     // DashboardTabs,
     // DashboardContributorsList,
     ReceiversList,
-    ControlItem,
+    Receiver,
     // DashboardMap,
+  },
+  computed: {
+    ...mapState([
+      "selectedReceiver"
+    ]),
   },
   methods: {
     addAddressToMap ({ city, country }) {

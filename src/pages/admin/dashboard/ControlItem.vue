@@ -31,17 +31,15 @@
             label="payload"
           ></va-input>
         </div>
-        <div>
-          <va-button size="small" @click="doPost"> Publish </va-button>
-          <transition name="fade">
-            <va-badge
-              overlap
-              v-show="success"
-              class="fade"
-              text="Sent!"
-              color="success"
-            />
-          </transition>
+        <div class="row flex">
+          <div>
+            <va-button size="small" @click="doPost"> Publish </va-button>
+          </div>
+          <div>
+            <transition name="fade">
+              <p class="fade" v-show="success">Sent</p>
+            </transition>
+          </div>
         </div>
       </va-inner-loading>
     </va-card-content>
@@ -73,7 +71,7 @@ export default {
       "nmosControlEndpoint",
       "nmosRegistryEndpoint",
       "cyanviewSecondaryTag",
-      "cyanviewPrimaryTag",
+      "cyanviewPrimaryTag"
     ]),
     theme() {
       return useGlobalConfig().getGlobalConfig().colors;

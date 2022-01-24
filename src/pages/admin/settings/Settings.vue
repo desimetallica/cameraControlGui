@@ -19,8 +19,14 @@
           <div class="flex" prop="nmosRegistryEndpoint">
             <va-input v-model="nmosRegistryEndpoint" label="Nmos Registry Endpoint"></va-input>
           </div>
+          <div class="flex" prop="nmosGainEndpoint">
+            <va-input v-model="nmosGainEndpoint" label="Nmos Gain Endpoint"></va-input>
+          </div>
+          <div class="flex" prop="nmosExposureEndpoint">
+            <va-input v-model="nmosExposureEndpoint" label="Nmos Exposure Endpoint"></va-input>
+          </div>
           <va-divider />
-          <div class="title mt-3">Automatically stored</div>
+          <div class="text--secondary">Auto-saved no need to refresh</div>
         </va-card-content>
       </va-card>
     </div>
@@ -65,6 +71,22 @@ export default {
         this.$store.commit("changeNmosRegistryEndpoint", value);
       },
     },
+    nmosGainEndpoint: {
+      get() {
+        return this.$store.state.nmosGainEndpoint;
+      },
+      set(value) {
+        this.$store.commit("changeNmosGainEndpoint", value);
+      },
+    },
+    nmosExposureEndpoint: {
+      get() {
+        return this.$store.state.nmosExposureEndpoint;
+      },
+      set(value) {
+        this.$store.commit("changeNmosExposureEndpoint", value);
+      }
+    }
   },
 };
 </script>

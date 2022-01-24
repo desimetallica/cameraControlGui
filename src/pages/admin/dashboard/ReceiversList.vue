@@ -16,17 +16,18 @@
       <va-inner-loading :loading="loading" style="width: 100%;">
         <div
           class="mb-3"
-          v-for="(receiver, idx) in receivers"
+          v-for="(receiver, idx) in receivers" 
+          @click="updateSelectedReceiver(receiver)"
           :key="idx"
         >
           <!-- <va-progress-bar
             :modelValue="getPercent(receivers.contributions)"
-            :color="getProgressBarColor(idx)"
+            :color="getProgressBarColor(idx2)"
           >
             {{ contributor.contributions }} {{ $t('dashboard.charts.commits') }}
           </va-progress-bar> -->
-          <p class="mt-2">{{ receiver.description }}</p>
-          <p class="mt-2">ID: {{ receiver.id }}</p>
+          <p class="mt-2">{{ receiver.label }}</p>
+          <!-- <p class="mt-2">ID: {{ receiver.id }}</p> -->
         </div>
       </va-inner-loading>
     </va-card-content>
@@ -34,14 +35,15 @@
 </template>
 
 <script>
-import axios from 'axios'
+
 import { useGlobalConfig } from 'vuestic-ui'
+import { mapState } from "vuex";
+import store from "@/store"
 
 export default {
   name: 'ControlButton',
   data () {
     return {
-      receivers: [],
       loading: true,
       visibleList: []
     }
@@ -50,18 +52,25 @@ export default {
     this.loadReceiversList()
   },
   computed: {
+    ...mapState([
+      "receivers"
+    ]),
     theme() {
       return useGlobalConfig().getGlobalConfig().colors
     }
   },
   methods: {
-    async loadReceiversList () {
-      this.loading = true
-      const { data } = await axios.get('http://172.17.0.3:8080/x-nmos/query/v1.3/receivers?paging.order=update&paging.limit=10')
-      this.receivers = data
-      this.loading = false
+    loadReceiversList() {
+      // console.log(this.receivers)
+      this.loading = true;
+      store.dispatch("fetchReceivers")
+      this.loading = false;
+    },
+    updateSelectedReceiver(receiver){
+      this.$store.commit("setSelectedReceiver", receiver);
+      // this.$store.dispatch("setSelectedReceiver", receiver)
     }
-  },
+  }
 }
 </script>
 

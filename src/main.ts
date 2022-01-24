@@ -8,7 +8,6 @@ import router from './router'
 import store from './store'
 import vuesticGlobalConfig from './services/vuestic-ui/global-config'
 
-
 const i18nConfig = {
   locale: 'en',
   fallbackLocale: 'en',
@@ -35,4 +34,3 @@ if (process.env.VUE_APP_GTM_ENABLED === 'true') {
 app.use(createI18n(i18nConfig))
 app.use(VuesticPlugin, vuesticGlobalConfig)
 app.mount('#app')
-
