@@ -2,9 +2,11 @@
   <va-card class="d-flex">
     <va-card-title>
       <h1>{{ selectedReceiver.description }}</h1>
-      <!-- <div class="mr-0 text-right">
-        <a class="mr-0 link" @click="doPost"> Reload </a>
-      </div> -->
+      <div class="mr-0 text-right">
+
+        <va-badge text="connected" color="success" class="mr-4" v-if="connectionStatus"/>
+        <va-badge text="disconnected" color="warning" class="mr-4" v-else/>
+      </div>
     </va-card-title>
 
     <va-card-content class="flex">
@@ -38,12 +40,15 @@
             {{ flow.event_type }}
           </p>
           <div class="row flex">
-            <div>
+            <div v-if="!connectionStatus">
               <va-button size="small" @click="doConnection(flow)"> Connect </va-button>
+            </div>
+            <div v-if="connectionStatus">
+              <va-button size="small" @click="doDisconnect(flow)"> Disconnect </va-button>
             </div>
             <div>
               <transition name="fade">
-                <p class="fade" v-show="success">Sent</p>
+                <p class="fade" v-show="success">Done</p>
               </transition>
             </div>
           </div>
@@ -74,6 +79,7 @@ export default {
       loading: false,
       success: false,
       res: "",
+      connectionStatus: false
     };
   },
   computed: {
@@ -83,10 +89,11 @@ export default {
     },
   },
   mounted() {
+    this.checkSubscriptionStatus(this.selectedReceiver.id);
     this.loadCompatibleSendersList();
   },
   updated() {
-    this.loadCompatibleSendersList();
+    this.checkSubscriptionStatus(this.selectedReceiver.id)
   },
   methods: {
     async loadCompatibleSendersList() {
@@ -102,6 +109,41 @@ export default {
       setTimeout(() => {
         this.success = false;
       }, 1000);
+    },
+    async doDisconnect() {
+      this.loading = true;
+
+      const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
+      const receiverControlURL = receiverDevice.device.controls.find( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1").href
+      
+      console.log(receiverControlURL)
+      // const receiverDevice = await devicesService.getDevice(this.selectedReceiver.id, this.nmosRegistryEndpoint)
+      // const receiverControlURL = receiverDevice.controls.find( x => x.type === "urn:x-nmos:control:events/v1.0").href
+
+      /*
+      curl -X PATCH -H 'Content-Type: application/json' 
+      http://172.17.0.6:8080/x-nmos/connection/v1.1/single/receivers/37a97123-37d4-53d1-aba3-02a7335b3982/staged 
+      -d '{
+            "transport_params": [
+                {}
+            ],
+            "activation": {
+                "mode": "activate_immediate"
+            },
+            "master_enable": false
+        }
+      */
+      const connectionPayload = {
+        "transport_params": [{}],
+        "activation":{"mode":"activate_immediate"},
+        "master_enable":false,
+      }
+      const stagedResult = await connectionService.stageReceiver(this.selectedReceiver.id, receiverControlURL, connectionPayload)
+      this.connectionStatus = false;
+      this.success = true;
+      this.clearVar();
+      this.loading = false;
+      return stagedResult
     },
     async doConnection(flow) {
       //connect to specific sender
@@ -134,7 +176,7 @@ export default {
         "master_enable":true,
         "sender_id":"d65deb1d-bf69-5432-ab24-b3d384a99f77"}'
       */
-     console.log(connectionConstraints)
+      console.log(connectionConstraints)
       const connectionPayload = {
         "transport_params": [{
           "connection_uri":connectionConstraints.sender[0].connection_uri.enum[0],
@@ -147,11 +189,18 @@ export default {
       }
       console.log(connectionPayload);
       const stagedResult = await connectionService.stageReceiver(this.selectedReceiver.id, receiverControlURL, connectionPayload)
+      this.connectionStatus = true;
       this.success = true;
       this.clearVar();
       this.loading = false;
       return stagedResult
     },
+    checkSubscriptionStatus(receiverId){
+      receiversService.getConnectionStatus(receiverId, this.nmosRegistryEndpoint)
+        .then(({active}) => {
+          this.connectionStatus = active
+        })
+    }   
   },
 };
 </script>

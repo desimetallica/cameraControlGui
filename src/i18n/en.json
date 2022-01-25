@@ -288,8 +288,9 @@
   },
   "menu": {
     "settings": "Settings",
+    "is07connectivity": "IS07 connectivity",
     "remoteControl": "Remote Control",
-    "mqttTest": "MQTT Sample",
+    "mqttTest": "Mqtt JS Client",
     "auth": "Auth",
     "rating": "Rating",
     "buttons": "Buttons",

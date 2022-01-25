@@ -25,6 +25,9 @@
           <div class="flex" prop="nmosExposureEndpoint">
             <va-input v-model="nmosExposureEndpoint" label="Nmos Exposure Endpoint"></va-input>
           </div>
+          <div class="flex" prop="videoSourceAddress">
+            <va-input v-model="videoSourceAddress" label="Video Control Source Address"></va-input>
+          </div>
           <va-divider />
           <div class="text--secondary">Auto-saved no need to refresh</div>
         </va-card-content>
@@ -85,6 +88,14 @@ export default {
       },
       set(value) {
         this.$store.commit("changeNmosExposureEndpoint", value);
+      }
+    },
+    videoSourceAddress: {
+      get() {
+        return this.$store.state.videoSourceAddress;
+      },
+      set(value) {
+        this.$store.commit("changeVideoSourceAddress", value);
       }
     }
   },

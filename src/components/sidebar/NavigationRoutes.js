@@ -12,6 +12,13 @@ export default {
       },
     },
     {
+      name: 'is07connectivity',
+      displayName: 'menu.is07connectivity',
+      meta: {
+        icon: 'material-icons-sync_alt',
+      },
+    },
+    {
       name: 'settings',
       displayName: 'menu.settings',
       meta: {
@@ -22,17 +29,18 @@ export default {
       name: 'mqtt-test',
       displayName: 'menu.mqttTest',
       meta: {
+        icon: 'material-icons-explore',
+      },
+    }
+    /*
+    {
+      name: 'remote-control',
+      displayName: 'menu.remoteControl',
+      meta: {
         icon: 'vuestic-iconset-settings',
       },
     },
-    // {
-    //   name: 'remote-control',
-    //   displayName: 'menu.remoteControl',
-    //   meta: {
-    //     icon: 'vuestic-iconset-settings',
-    //   },
-    // },
-    // /*
+    /*
     {
       name: 'statistics',
       displayName: 'menu.statistics',
@@ -242,6 +250,6 @@ export default {
         },
       ],
     },
-   // */
+   */
   ],
 }

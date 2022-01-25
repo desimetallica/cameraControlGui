@@ -22,6 +22,11 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/pages/admin/dashboard/Dashboard.vue'),
       },
       {
+        name: 'is07connectivity',
+        path: 'is07connectivity',
+        component: () => import('@/pages/admin/Is07connectivity.vue'),
+      },
+      {
         name: 'remote-control',
         path: 'remote-control',
         component: () => import('@/pages/admin/remoteControl/remoteControl.vue'),

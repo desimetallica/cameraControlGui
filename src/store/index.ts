@@ -18,7 +18,8 @@ export default createStore({
     nmosGainEndpoint: 'http://172.17.0.5:9999/gain',
     nmosExposureEndpoint: 'http://172.17.0.5:9999/exposure',
     nmosControlEndpoint: 'http://172.17.0.5:9999/control',
-    nmosRegistryEndpoint: 'http://docker-easy-nmos-registry:8080/'
+    nmosRegistryEndpoint: 'http://docker-easy-nmos-registry:8080/',
+    videoSourceAddress: 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
   },
   getters: {
 
@@ -68,6 +69,9 @@ export default createStore({
     },
     changeNmosRegistryEndpoint(state, newNmosRegistryEndpoint) {
       state.nmosRegistryEndpoint = newNmosRegistryEndpoint
+    },
+    changeVideoSourceAddress(state, newVideoSourceAddress) {
+      state.videoSourceAddress = newVideoSourceAddress
     }
   },
 })

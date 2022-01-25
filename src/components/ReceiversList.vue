@@ -26,7 +26,7 @@
           >
             {{ contributor.contributions }} {{ $t('dashboard.charts.commits') }}
           </va-progress-bar> -->
-          <p class="mt-2">{{ receiver.label }}</p>
+          <a class="mt-2 link">{{ receiver.label }}</a>
           <!-- <p class="mt-2">ID: {{ receiver.id }}</p> -->
         </div>
       </va-inner-loading>
@@ -41,7 +41,7 @@ import { mapState } from "vuex";
 import store from "@/store"
 
 export default {
-  name: 'ControlButton',
+  name: 'Receiver List',
   data () {
     return {
       loading: true,
