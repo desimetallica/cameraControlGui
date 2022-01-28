@@ -1,7 +1,7 @@
 <template>
-  <va-card class="d-flex dashboard-contributors-list">
+  <va-card class="d-flex">
     <va-card-title>
-      <h1>Receivers list</h1>
+      <h1>Event Receivers list</h1>
       <div class="mr-0 text-right">
         <a
           class="mr-0 link"
@@ -20,14 +20,7 @@
           @click="updateSelectedReceiver(receiver)"
           :key="idx"
         >
-          <!-- <va-progress-bar
-            :modelValue="getPercent(receivers.contributions)"
-            :color="getProgressBarColor(idx2)"
-          >
-            {{ contributor.contributions }} {{ $t('dashboard.charts.commits') }}
-          </va-progress-bar> -->
           <a class="mt-2 link">{{ receiver.label }}</a>
-          <!-- <p class="mt-2">ID: {{ receiver.id }}</p> -->
         </div>
       </va-inner-loading>
     </va-card-content>
@@ -45,8 +38,13 @@ export default {
   data () {
     return {
       loading: true,
-      visibleList: []
+      visibleList: [],
+      value: 1
     }
+  },
+  unmounted () {
+    // this.$store.commit("setSelectedReceiver", null);
+    this.updateSelectedReceiver(undefined)
   },
   mounted () {
     this.loadReceiversList()
@@ -63,13 +61,13 @@ export default {
     loadReceiversList() {
       // console.log(this.receivers)
       this.loading = true;
-      store.dispatch("fetchReceivers")
+      store.dispatch("fetchEventReceivers")
       this.loading = false;
     },
     updateSelectedReceiver(receiver){
       this.$store.commit("setSelectedReceiver", receiver);
       // this.$store.dispatch("setSelectedReceiver", receiver)
-    }
+    },
   }
 }
 </script>

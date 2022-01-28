@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="row row-equal">
-      <va-card class="flex xs12 md6 lg6">
+      <va-card class="flex xs12">
         <va-card-title>
           <h1>Genaral Configuration</h1>
         </va-card-title>

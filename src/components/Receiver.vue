@@ -3,7 +3,6 @@
     <va-card-title>
       <h1>{{ selectedReceiver.description }}</h1>
       <div class="mr-0 text-right">
-
         <va-badge text="connected" color="success" class="mr-4" v-if="connectionStatus"/>
         <va-badge text="disconnected" color="warning" class="mr-4" v-else/>
       </div>
@@ -26,17 +25,19 @@
         </p>
       </div>
       <va-divider />
+
       <div class="flex md12 sm12 xs12" v-if="compatibleFlows">
+        
         <div class="title mb-2">Compatible flows</div>
         <div class="flex md12 sm12 xs12" v-for="(flow) in compatibleFlows" :key="flow.id">
-          <div class="title mb-2">{{flow.description}}</div>
-          <p class="mb-3 topic-result">
+          <div class="title mb-3">{{flow.description}}</div>
+          <p class="mb-2 topic-result">
             {{ flow.id }}
           </p>
-          <p class="mb-3 topic-result">
+          <p class="mb-2 topic-result">
             {{ flow.label }}
           </p>
-          <p class="mb-3 topic-result">
+          <p class="mb-2 topic-result">
             {{ flow.event_type }}
           </p>
           <div class="row flex">
@@ -53,6 +54,7 @@
             </div>
           </div>
         </div>
+        
       </div>
     </va-card-content>
   </va-card>
@@ -94,6 +96,7 @@ export default {
   },
   updated() {
     this.checkSubscriptionStatus(this.selectedReceiver.id)
+    this.loadCompatibleSendersList()
   },
   methods: {
     async loadCompatibleSendersList() {

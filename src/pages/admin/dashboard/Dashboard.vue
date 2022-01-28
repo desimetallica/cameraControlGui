@@ -1,35 +1,28 @@
 <template>
   <div class="dashboard">
-    <div class="row">
-      <div class="flex xs12 md6 lg4">
-        <!-- <receivers-list/> -->
-      </div>
-    
-      <!-- <div class="flex xs12 md6 lg6">
-        <receiver v-if="selectedReceiver != null" :selectedReceiver="selectedReceiver" />
-      </div> -->
-    </div>
-    <!-- <dashboard-charts /> -->
-    <!-- <dashboard-info-block />  -->
     <div class="row row-equal">
       <div class="flex xs12 lg9">
         <video-component :options="videoOptions"> </video-component>
       </div>
-      <div class="flex xs12 lg9">
-        <control-slider :title="gain"> </control-slider>
+
+      <div class="flex xs12 md9 lg9">
+        <div v-if="connectedReceivers.length != 0">
+          <div v-for="(receiver, idx) in connectedReceivers" :key="idx">
+            <control-slider :receiver="receiver"> </control-slider>
+          </div>  
+        </div>
       </div>
-      <div class="flex xs12 lg9">
-        <control-slider :title="exposure"> </control-slider>
-      </div>
-    </div>
+    </div>  
   </div>
 </template>
+
 
 <script>
 // import ReceiversList from '../../../components/ReceiversList.vue'
 import ControlSlider from "@/components/ControlSlider.vue"
 import VideoComponent from "@/components/VideoComponent.vue"
 import store from "@/store" 
+import { mapState } from "vuex"
 
 export default {
   name: 'dashboard',
@@ -55,13 +48,13 @@ export default {
     VideoComponent,
     ControlSlider
   },
+  mounted() {
+    store.dispatch("fetchConnectedReceivers")
+  },
   computed: {
-
+    ...mapState(["connectedReceivers"]),
   },
   methods: {
-    addAddressToMap ({ city, country }) {
-      this.$refs.dashboardMap.addAddress({ city: city.text, country })
-    },
   },
 }
 </script>

@@ -5,19 +5,19 @@ import sendersService from "@/services/nmos/sendersService.js"
 export default createStore({
   strict: true, // process.env.NODE_ENV !== 'production',
   state: {
-
+    connectedReceivers: [Object],
     selectedReceiver: null,
-    receivers: [],
-    senders: [],
+    receivers: [Object],
+    senders: [Object],
     isSidebarMinimized: false,
     userName: 'Test User',
 
     cyanviewPrimaryTag: 'cy-rio-15-173',
     cyanviewSecondaryTag: '1ep1mdy',
 
-    nmosGainEndpoint: 'http://172.17.0.5:9999/gain',
-    nmosExposureEndpoint: 'http://172.17.0.5:9999/exposure',
-    nmosControlEndpoint: 'http://172.17.0.5:9999/control',
+    nmosGainEndpoint: 'http://nmos-cpp-sender-dev:9999/',
+    nmosExposureEndpoint: 'http://nmos-cpp-sender-dev:9999/',
+    nmosControlEndpoint: 'http://nmos-cpp-sender-dev:9999/',
     nmosRegistryEndpoint: 'http://docker-easy-nmos-registry:8080/',
     videoSourceAddress: 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
   },
@@ -34,9 +34,29 @@ export default createStore({
       return sendersService.getSenders(this.state.nmosRegistryEndpoint).then(({ senders }) => {
         commit("setSenders", senders)
       })
+    },
+    fetchEventReceivers({ commit }) {
+      const rqlQuery = "eq(caps.media_types," + encodeURIComponent("application/json") + ")"
+      return receiversService.makeRqlQuery(rqlQuery, this.state.nmosRegistryEndpoint).then(({ receivers }) => {
+        commit("setReceivers", receivers)
+      })
+    },
+    fetchConnectedReceivers({ commit }) {
+      const rqlQuery = "and(eq(caps.media_types," + encodeURIComponent("application/json") + "),eq(subscription.active,true))"
+      // console.log(rqlQuery)
+      return receiversService.makeRqlQuery(rqlQuery, this.state.nmosRegistryEndpoint).then(({ receivers }) => {
+        commit("setConnectedReceivers", receivers)
+      })
+    },
+    updateSelecetedReceiver({ commit }, receiver){
+      commit("setSelectedReceiver", receiver)      
     }
+
   },
   mutations: {
+    setConnectedReceivers(state, receivers){
+      state.connectedReceivers = receivers
+    },
     setSelectedReceiver(state, receiver){
       state.selectedReceiver = receiver
     },

@@ -10,6 +10,11 @@ const getReceivers = baseURL =>
     .get("/x-nmos/query/v1.3/receivers", { baseURL: baseURL })
     .then(({ data }) => ({ receivers: data }))
 
+const makeRqlQuery = (rqlQuery, baseURL) => 
+  axios 
+    .get("/x-nmos/query/v1.3/receivers/?query.rql=" + rqlQuery, { baseURL: baseURL})
+    .then(({ data }) => ({ receivers: data }))
+
 const getConnectionStatus = (receiverId, baseURL) =>
   axios
     .get("/x-nmos/query/v1.3/receivers/" + receiverId, { baseURL: baseURL })
@@ -18,5 +23,6 @@ const getConnectionStatus = (receiverId, baseURL) =>
 export default {
   getReceiver,
   getReceivers,
-  getConnectionStatus
+  getConnectionStatus,
+  makeRqlQuery
 };

@@ -26,15 +26,10 @@ import { mapState } from "vuex"
 
 export default {
   name: 'dashboard',
-  
+
   components: {
-    // DashboardCharts,
-    // DashboardInfoBlock,
-    // DashboardTabs,
-    // DashboardContributorsList,
     ReceiversList,
-    Receiver,
-    // DashboardMap,
+    Receiver
   },
   computed: {
     ...mapState([
@@ -42,9 +37,7 @@ export default {
     ]),
   },
   methods: {
-    addAddressToMap ({ city, country }) {
-      this.$refs.dashboardMap.addAddress({ city: city.text, country })
-    },
+    
   },
 }
 </script>
