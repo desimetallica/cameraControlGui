@@ -1,13 +1,4 @@
-FROM node:8
+FROM httpd:latest
 
-WORKDIR /app
+COPY ./dist/ /usr/local/apache2/htdocs/
 
-COPY . /app
-
-EXPOSE 8080
-
-RUN npm install http-server -g
-
-RUN npm install && npm run build
-
-CMD http-server ./dist
