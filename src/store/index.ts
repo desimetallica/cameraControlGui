@@ -15,8 +15,8 @@ export default createStore({
     cyanviewPrimaryTag: 'cy-rio-15-173',
     cyanviewSecondaryTag: '1ep1mdy',
 
-    nmosGainEndpoint: 'http://nmos-cpp-sender-dev:9999/',
-    nmosExposureEndpoint: 'http://nmos-cpp-sender-dev:9999/',
+    nmosGainEndpoint: 'http://10.20.1.25:9999/',
+    nmosExposureEndpoint: 'http://10.20.1.25:9999/',
     nmosControlEndpoint: 'http://nmos-cpp-sender-dev:9999/',
     nmosRegistryEndpoint: 'http://10.20.1.17:8000/',
     videoSourceAddress: 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
