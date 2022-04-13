@@ -98,8 +98,7 @@ export default {
     this.checkSubscriptionStatus(this.selectedReceiver.id)
     this.loadCompatibleSendersList()
   },
-  methods: {
-    async loadCompatibleSendersList() {
+  methods: { async loadCompatibleSendersList() {
       this.loading = true;
       const rqlQuery = "matches(event_type," + encodeURIComponent(this.selectedReceiver ? this.selectedReceiver.caps.event_types : "null") + ")"
       flowsService.makeRqlQuery(rqlQuery, this.nmosRegistryEndpoint).then(({ flows }) => {
@@ -116,10 +115,13 @@ export default {
     async doDisconnect() {
       this.loading = true;
 
-      const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
-      const receiverControlURL = receiverDevice.device.controls.find( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1").href
+      // const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
+      // const receiverControlURL = receiverDevice.device.controls.find( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1").href
       
-      console.log(receiverControlURL)
+      const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
+      const receiverControlHrefURL = receiverDevice.device.controls.filter( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1")
+      
+      console.log(receiverControlHrefURL)
       // const receiverDevice = await devicesService.getDevice(this.selectedReceiver.id, this.nmosRegistryEndpoint)
       // const receiverControlURL = receiverDevice.controls.find( x => x.type === "urn:x-nmos:control:events/v1.0").href
 
@@ -141,12 +143,18 @@ export default {
         "activation":{"mode":"activate_immediate"},
         "master_enable":false,
       }
-      const stagedResult = await connectionService.stageReceiver(this.selectedReceiver.id, receiverControlURL, connectionPayload)
+      // const stagedResult = await connectionService.stageReceiver(this.selectedReceiver.id, receiverControlURL, connectionPayload)
+      const stagedResultArray = []
+      receiverControlHrefURL.forEach(hrefUrl => {
+        stagedResultArray.push(connectionService.stageReceiver(this.selectedReceiver.id, hrefUrl.href, connectionPayload))
+      })
+      
+
       this.connectionStatus = false;
       this.success = true;
       this.clearVar();
       this.loading = false;
-      return stagedResult
+      return stagedResultArray
     },
     async doConnection(flow) {
       //connect to specific sender
@@ -155,18 +163,22 @@ export default {
       const senderQueryResult = await senderService.makeRqlQuery(rqlQuery, this.nmosRegistryEndpoint)
       console.log(senderQueryResult)
       const senderDevice = await devicesService.getDevice(senderQueryResult.senders[0].device_id, this.nmosRegistryEndpoint)
-      const senderControlURL = senderDevice.device.controls.find( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1").href
-      
-      const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
-      const receiverControlURL = receiverDevice.device.controls.find( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1").href
-      
-      console.log(receiverControlURL)
-      console.log(senderControlURL)
-      // const receiverDevice = await devicesService.getDevice(this.selectedReceiver.id, this.nmosRegistryEndpoint)
-      // const receiverControlURL = receiverDevice.controls.find( x => x.type === "urn:x-nmos:control:events/v1.0").href
+      const senderControlHrefList = senderDevice.device.controls.filter( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1")
 
-      const connectionConstraints = await connectionService.getSingleSender(senderQueryResult.senders[0].id, senderControlURL)
+      const receiverDevice = await devicesService.getDevice(this.selectedReceiver.device_id, this.nmosRegistryEndpoint)
+      const receiverControlHrefURL = receiverDevice.device.controls.filter( x => x.type === "urn:x-nmos:control:sr-ctrl/v1.1")
       
+      const requests = []
+      
+      senderControlHrefList.forEach(element => {
+        requests.push(connectionService.getSingleSender(senderQueryResult.senders[0].id, element.href))
+      });
+
+      console.log(requests)
+      let connectionConstraints = await Promise.all(requests)
+      //keep only the successed requests
+      connectionConstraints = connectionConstraints.filter( n => n)
+
       /*
       curl -X PATCH -H 'Content-Type: application/json' 
       http://172.17.0.2:8080/x-nmos/connection/v1.1/single/receivers/37a97123-37d4-53d1-aba3-02a7335b3982/staged 
@@ -179,24 +191,30 @@ export default {
         "master_enable":true,
         "sender_id":"d65deb1d-bf69-5432-ab24-b3d384a99f77"}'
       */
-      console.log(connectionConstraints)
+
+      // console.log(connectionConstraints)
       const connectionPayload = {
         "transport_params": [{
-          "connection_uri":connectionConstraints.sender[0].connection_uri.enum[0],
-          "ext_is_07_rest_api_url":connectionConstraints.sender[0].ext_is_07_rest_api_url.enum[0],
-          "ext_is_07_source_id":connectionConstraints.sender[0].ext_is_07_source_id.enum[0]
+          "connection_uri":connectionConstraints[0].sender[0].connection_uri.enum[0],
+          "ext_is_07_rest_api_url":connectionConstraints[0].sender[0].ext_is_07_rest_api_url.enum[0],
+          "ext_is_07_source_id":connectionConstraints[0].sender[0].ext_is_07_source_id.enum[0]
         }],
         "activation":{"mode":"activate_immediate"},
         "master_enable":true,
         "sender_id":senderService.id
       }
-      console.log(connectionPayload);
-      const stagedResult = await connectionService.stageReceiver(this.selectedReceiver.id, receiverControlURL, connectionPayload)
+      // console.log(connectionPayload);
+      
+      const stagedResultArray = []
+      receiverControlHrefURL.forEach(hrefUrl => {
+        stagedResultArray.push(connectionService.stageReceiver(this.selectedReceiver.id, hrefUrl.href, connectionPayload))
+      })
+      
       this.connectionStatus = true;
       this.success = true;
       this.clearVar();
       this.loading = false;
-      return stagedResult
+      return stagedResultArray
     },
     checkSubscriptionStatus(receiverId){
       receiversService.getConnectionStatus(receiverId, this.nmosRegistryEndpoint)

@@ -2,8 +2,11 @@ import axios from "axios";
 
 const getSingleSender = (senderId, baseURL) =>
 	axios
-		.get("/single/senders/" + senderId + "/constraints", { baseURL: baseURL })
+		.get("/single/senders/" + senderId + "/constraints", { baseURL: baseURL, timeout: 300 })
 		.then(({ data }) => ({ sender: data }))
+		.catch(error => {
+			console.log(error)
+		})
 
 const getSingleSenders = baseURL =>
 	axios
@@ -16,9 +19,13 @@ const stageReceiver = (receiverId, baseURL, stagedPayload) =>
 			stagedPayload,
 			{
 				baseURL: baseURL,
+				timeout: 300,
 				Headers: { "Content-Type": "application/json" }
 			})
 		.then(({ data }) => ({ receiver: data }))
+		.catch(error => {
+			console.log(error)
+		})
 
 export default {
 	getSingleSenders,

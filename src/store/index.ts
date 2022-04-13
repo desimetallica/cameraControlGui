@@ -18,7 +18,7 @@ export default createStore({
     nmosGainEndpoint: 'http://nmos-cpp-sender-dev:9999/',
     nmosExposureEndpoint: 'http://nmos-cpp-sender-dev:9999/',
     nmosControlEndpoint: 'http://nmos-cpp-sender-dev:9999/',
-    nmosRegistryEndpoint: 'http://docker-easy-nmos-registry:8080/',
+    nmosRegistryEndpoint: 'http://10.20.1.17:8000/',
     videoSourceAddress: 'https://d2zihajmogu5jn.cloudfront.net/bipbop-advanced/bipbop_16x9_variant.m3u8',
   },
   getters: {
